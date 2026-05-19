@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Belajar Coding - by Etty Yulinar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #E1F5EE 0%, #EAF3DE 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 16px;
+        }
+
+        /* ===== TOP BAR ===== */
+        .top-bar {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .app-logo {
+            font-size: 22px;
+            font-weight: 900;
+            color: #085041;
+            letter-spacing: -0.5px;
+        }
+
+        .app-logo span { color: #1D9E75; }
+
+        .credit {
+            font-size: 12px;
+            color: #3B6D11;
+            font-weight: 700;
+        }
+
+        /* ===== CARD ===== */
+        .quiz-card {
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 8px 40px rgba(15, 110, 86, 0.12);
+            width: 100%;
+            max-width: 680px;
+            padding: 36px;
+        }
+
+        /* ===== HEADER ===== */
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .quiz-title {
+            font-size: 20px;
+            font-weight: 900;
+            color: #085041;
+        }
+
+        .score-badge {
+            background: #EAF3DE;
+            color: #3B6D11;
+            font-size: 14px;
+            font-weight: 800;
+            padding: 6px 18px;
+            border-radius: 99px;
+        }
+
+        /* ===== PROGRESS ===== */
+        .progress-wrap { margin-bottom: 28px; }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 700;
+            color: #3B6D11;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar-bg {
+            height: 10px;
+            background: #EAF3DE;
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1D9E75, #3B6D11);
+            border-radius: 99px;
+            transition: width 0.5s ease;
+        }
+
+        /* ===== QUESTION ===== */
+        .tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 99px;
+            margin-bottom: 12px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .tag-html { background: #FAEEDA; color: #854F0B; }
+        .tag-css  { background: #EEEDFE; color: #3C3489; }
+        .tag-js   { background: #FAEEDA; color: #633806; }
+
+        .q-text {
+            font-size: 18px;
+            font-weight: 800;
+            color: #1C2C22;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .q-code {
+            background: #F4F7F5;
+            border-left: 4px solid #1D9E75;
+            border-radius: 0 10px 10px 0;
+            padding: 14px 18px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #1C2C22;
+            margin-bottom: 20px;
+            white-space: pre;
+            overflow-x: auto;
+            display: none;
+        }
+
+        /* ===== OPTIONS ===== */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .opt-btn {
+            background: #F9FAFB;
+            border: 2px solid #E5EDE9;
+            border-radius: 14px;
+            padding: 14px 16px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: #1C2C22;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.15s;
+            line-height: 1.4;
+        }
+
+        .opt-btn:hover:not(:disabled) {
+            border-color: #1D9E75;
+            background: #E1F5EE;
+            color: #085041;
+            transform: translateY(-2px);
+        }
+
+        .opt-btn.correct {
+            background: #EAF3DE;
+            border-color: #3B6D11;
+            color: #3B6D11;
+        }
+
+        .opt-btn.wrong {
+            background: #FCEBEB;
+            border-color: #A32D2D;
+            color: #A32D2D;
+        }
+
+        .opt-btn.reveal {
+            background: #EAF3DE;
+            border-color: #3B6D11;
+            color: #3B6D11;
+            opacity: 0.55;
+        }
+
+        /* ===== FEEDBACK ===== */
+        .feedback-box {
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.6;
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        .feedback-box.correct { background: #EAF3DE; color: #085041; display: block; }
+        .feedback-box.wrong   { background: #FCEBEB; color: #791F1F; display: block; }
+
+        .feedback-icon { font-size: 18px; margin-right: 6px; }
+
+        /* ===== NEXT BUTTON ===== */
+        .next-btn {
+            width: 100%;
+            padding: 16px;
+            background: #1D9E75;
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 16px;
+            font-weight: 900;
+            cursor: pointer;
+            display: none;
+            transition: background 0.15s, transform 0.1s;
+            letter-spacing: 0.02em;
+        }
+
+        .next-btn:hover { background: #0F6E56; transform: translateY(-1px); }
+        .next-btn:active { transform: translateY(0); }
+
+        /* ===== RESULT ===== */
+        .result-card {
+            display: none;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .result-emoji { font-size: 72px; margin-bottom: 16px; }
+
+        .result-title {
+            font-size: 26px;
+            font-weight: 900;
+            color: #085041;
+            margin-bottom: 8px;
+        }
+
+        .result-score {
+            font-size: 52px;
+            font-weight: 900;
+            color: #1D9E75;
+            margin-bottom: 4px;
+        }
+
+        .result-max {
+            font-size: 16px;
+            color: #3B6D11;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .result-msg {
+            font-size: 15px;
+            color: #5F5E5A;
+            margin-bottom: 32px;
+            line-height: 1.6;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .result-bars {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-pill {
+            background: #F4F7F5;
+            border-radius: 14px;
+            padding: 12px 20px;
+            text-align: center;
+        }
+
+        .stat-num {
+            font-size: 22px;
+            font-weight: 900;
+        }
+
+        .stat-num.green { color: #1D9E75; }
+        .stat-num.red   { color: #E24B4A; }
+
+        .stat-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #888780;
+            margin-top: 2px;
+        }
+
+        .restart-btn {
+            padding: 16px 48px;
+            background: #1D9E75;
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 16px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+        }
+
+        .restart-btn:hover { background: #0F6E56; transform: translateY(-1px); }
+
+        /* ===== START SCREEN ===== */
+        .start-screen { text-align: center; padding: 20px 0; }
+        .start-emoji { font-size: 72px; margin-bottom: 20px; }
+        .start-title { font-size: 26px; font-weight: 900; color: #085041; margin-bottom: 12px; }
+        .start-desc { font-size: 15px; color: #5F5E5A; line-height: 1.7; margin-bottom: 32px; max-width: 420px; margin-left: auto; margin-right: auto; }
+
+        .topic-pills {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+
+        .topic-pill {
+            padding: 8px 18px;
+            border-radius: 99px;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .start-btn {
+            padding: 16px 56px;
+            background: #1D9E75;
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 18px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+        }
+
+        .start-btn:hover { background: #0F6E56; transform: translateY(-2px); }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            margin-top: 24px;
+            font-size: 12px;
+            color: #3B6D11;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        @media (max-width: 520px) {
+            .quiz-card { padding: 24px 20px; }
+            .options-grid { grid-template-columns: 1fr; }
+            .q-text { font-size: 16px; }
+            .result-score { font-size: 40px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="app-logo">💻 Kuis<span>Coding</span></div>
+        <div class="credit">by Etty Yulinar</div>
+    </div>
+
+    <div class="quiz-card">
+
+        <!-- START SCREEN -->
+        <div class="start-screen" id="start-screen">
+            <div class="start-emoji">🚀</div>
+            <div class="start-title">Kuis Belajar Coding!</div>
+            <div class="start-desc">Uji pengetahuan kamu tentang dasar-dasar pemrograman web. Ada 10 soal pilihan ganda seputar HTML, CSS, dan JavaScript!</div>
+            <div class="topic-pills">
+                <span class="topic-pill tag-html">HTML</span>
+                <span class="topic-pill tag-css">CSS</span>
+                <span class="topic-pill tag-js">JavaScript</span>
+            </div>
+            <button class="start-btn" onclick="startQuiz()">Mulai Kuis ▶</button>
+        </div>
+
+        <!-- QUIZ MAIN -->
+        <div id="quiz-main" style="display:none">
+            <div class="quiz-header">
+                <div class="quiz-title">Kuis Belajar Coding</div>
+                <div class="score-badge" id="score-badge">Skor: 0</div>
+            </div>
+
+            <div class="progress-wrap">
+                <div class="progress-info">
+                    <span id="q-number">Soal 1 dari 10</span>
+                    <span id="q-pct">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+                </div>
+            </div>
+
+            <div id="q-tag"></div>
+            <div class="q-text" id="q-text"></div>
+            <pre class="q-code" id="q-code"></pre>
+            <div class="options-grid" id="options-grid"></div>
+            <div class="feedback-box" id="feedback-box"></div>
+            <button class="next-btn" id="next-btn">Soal Berikutnya →</button>
+        </div>
+
+        <!-- RESULT -->
+        <div class="result-card" id="result-card">
+            <div class="result-emoji" id="result-emoji"></div>
+            <div class="result-title" id="result-title"></div>
+            <div class="result-score" id="result-score"></div>
+            <div class="result-max" id="result-max"></div>
+            <div class="result-bars">
+                <div class="stat-pill">
+                    <div class="stat-num green" id="stat-correct">0</div>
+                    <div class="stat-label">Benar ✅</div>
+                </div>
+                <div class="stat-pill">
+                    <div class="stat-num red" id="stat-wrong">0</div>
+                    <div class="stat-label">Salah ❌</div>
+                </div>
+            </div>
+            <div class="result-msg" id="result-msg"></div>
+            <button class="restart-btn" onclick="restart()">🔄 Main Lagi</button>
+        </div>
+
+    </div>
+
+    <div class="footer">Dibuat dengan HTML, CSS & JavaScript · Perempuan Inovasi 2025</div>
+
+    <script>
+        const questions = [
+            {
+                tag: "HTML", tagClass: "tag-html",
+                text: "Tag HTML apa yang digunakan untuk membuat judul paling besar?",
+                code: null,
+                options: ["<h1>", "<h6>", "<title>", "<big>"],
+                answer: 0,
+                explain: "✅ Tag <h1> adalah heading terbesar di HTML. Semakin besar angkanya (h2, h3...), semakin kecil ukurannya."
+            },
+            {
+                tag: "HTML", tagClass: "tag-html",
+                text: "Apa fungsi tag <a> dalam HTML?",
+                code: null,
+                options: ["Membuat gambar", "Membuat link/tautan", "Membuat tabel", "Membuat tombol"],
+                answer: 1,
+                explain: "✅ Tag <a> (anchor) digunakan untuk membuat hyperlink yang bisa diklik untuk berpindah halaman."
+            },
+            {
+                tag: "HTML", tagClass: "tag-html",
+                text: "Tag yang benar untuk menampilkan gambar di HTML adalah...",
+                code: null,
+                options: ['<image src="foto.jpg">', '<img src="foto.jpg" />', '<picture src="foto.jpg">', '<photo src="foto.jpg">'],
+                answer: 1,
+                explain: '✅ Tag <img> adalah tag yang benar. Atribut src diisi dengan alamat/path gambar yang ingin ditampilkan.'
+            },
+            {
+                tag: "CSS", tagClass: "tag-css",
+                text: "Properti CSS apa yang digunakan untuk mengubah warna teks?",
+                code: null,
+                options: ["background-color", "font-color", "color", "text-color"],
+                answer: 2,
+                explain: "✅ Properti 'color' mengubah warna teks. 'background-color' untuk warna latar belakang."
+            },
+            {
+                tag: "CSS", tagClass: "tag-css",
+                text: "Apa yang dilakukan oleh kode CSS berikut?",
+                code: "p {\n  font-size: 24px;\n  color: red;\n}",
+                options: [
+                    "Teks paragraf berwarna merah, ukuran 24px",
+                    "Background merah di paragraf",
+                    "Mengubah ukuran halaman menjadi 24px",
+                    "Semua gambar berwarna merah"
+                ],
+                answer: 0,
+                explain: "✅ Kode ini memilih semua elemen <p> (paragraf) dan mengatur warna teksnya menjadi merah dengan ukuran 24px."
+            },
+            {
+                tag: "CSS", tagClass: "tag-css",
+                text: "Properti CSS mana yang menyembunyikan elemen tapi TETAP mengambil ruang di halaman?",
+                code: null,
+                options: ["display: none", "visibility: hidden", "opacity: 1", "hidden: true"],
+                answer: 1,
+                explain: "✅ 'visibility: hidden' menyembunyikan tampilan elemen tapi ruangnya tetap ada. 'display: none' menghilangkan elemen beserta ruangnya."
+            },
+            {
+                tag: "HTML", tagClass: "tag-html",
+                text: "Tag apa yang digunakan untuk membuat daftar dengan nomor urut (1, 2, 3...)?",
+                code: null,
+                options: ["<ul>", "<dl>", "<ol>", "<list>"],
+                answer: 2,
+                explain: "✅ <ol> (ordered list) membuat daftar bernomor. <ul> (unordered list) membuat daftar dengan bullet/titik."
+            },
+            {
+                tag: "JS", tagClass: "tag-js",
+                text: "Apa hasil output dari kode JavaScript berikut ini?",
+                code: "console.log(5 + 3);",
+                options: ["53", "8", '"5 + 3"', "Error"],
+                answer: 1,
+                explain: "✅ 5 + 3 adalah operasi penjumlahan angka, hasilnya 8. Jika ditulis \"5\" + \"3\" barulah hasilnya \"53\" (penggabungan string)."
+            },
+            {
+                tag: "JS", tagClass: "tag-js",
+                text: "Cara yang benar untuk menulis komentar satu baris di JavaScript adalah...",
+                code: null,
+                options: ["/* ini komentar */", "# ini komentar", "// ini komentar", "<!-- ini komentar -->"],
+                answer: 2,
+                explain: "✅ Komentar satu baris di JavaScript menggunakan //. Komentar tidak dieksekusi oleh program, berguna untuk penjelasan kode."
+            },
+            {
+                tag: "HTML", tagClass: "tag-html",
+                text: "Atribut apa yang diisi pada tag <a> untuk menentukan alamat tujuan link?",
+                code: '<a ___="https://skilvul.com">Klik di sini</a>',
+                options: ["link", "src", "href", "url"],
+                answer: 2,
+                explain: "✅ Atribut 'href' (hypertext reference) digunakan untuk menentukan URL tujuan dari sebuah link/tautan."
+            },
+        ];
+
+        let shuffled = [], current = 0, score = 0, answered = false;
+
+        function shuffle(arr) {
+            return arr.slice().sort(() => Math.random() - 0.5);
+        }
+
+        function startQuiz() {
+            shuffled = shuffle(questions);
+            current = 0;
+            score = 0;
+            answered = false;
+            document.getElementById("start-screen").style.display = "none";
+            document.getElementById("quiz-main").style.display = "block";
+            document.getElementById("score-badge").textContent = "Skor: 0";
+            render();
+        }
+
+        function render() {
+            answered = false;
+            const q = shuffled[current];
+            const total = shuffled.length;
+            const pct = Math.round((current / total) * 100);
+
+            document.getElementById("q-number").textContent = `Soal ${current + 1} dari ${total}`;
+            document.getElementById("q-pct").textContent = pct + "%";
+            document.getElementById("progress-fill").style.width = pct + "%";
+
+            const tagEl = document.getElementById("q-tag");
+            tagEl.innerHTML = `<span class="tag ${q.tagClass}">${q.tag}</span>`;
+
+            document.getElementById("q-text").textContent = q.text;
+
+            const codeEl = document.getElementById("q-code");
+            if (q.code) {
+                codeEl.textContent = q.code;
+                codeEl.style.display = "block";
+            } else {
+                codeEl.style.display = "none";
+            }
+
+            const grid = document.getElementById("options-grid");
+            grid.innerHTML = "";
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement("button");
+                btn.className = "opt-btn";
+                btn.textContent = opt;
+                btn.onclick = () => pick(i);
+                grid.appendChild(btn);
+            });
+
+            const fb = document.getElementById("feedback-box");
+            fb.className = "feedback-box";
+            fb.textContent = "";
+
+            const nextBtn = document.getElementById("next-btn");
+            nextBtn.style.display = "none";
+        }
+
+        function pick(idx) {
+            if (answered) return;
+            answered = true;
+
+            const q = shuffled[current];
+            const btns = document.querySelectorAll(".opt-btn");
+
+            btns.forEach((btn, i) => {
+                btn.disabled = true;
+                if (i === q.answer) {
+                    btn.classList.add(idx === q.answer ? "correct" : "reveal");
+                } else if (i === idx) {
+                    btn.classList.add("wrong");
+                }
+            });
+
+            const fb = document.getElementById("feedback-box");
+            if (idx === q.answer) {
+                score++;
+                document.getElementById("score-badge").textContent = "Skor: " + score;
+                fb.className = "feedback-box correct";
+                fb.textContent = q.explain;
+            } else {
+                fb.className = "feedback-box wrong";
+                fb.textContent = "❌ Belum tepat. " + q.explain.replace("✅", "Yang benar:");
+            }
+
+            const nextBtn = document.getElementById("next-btn");
+            nextBtn.style.display = "block";
+            nextBtn.textContent = current < shuffled.length - 1 ? "Soal Berikutnya →" : "Lihat Hasil 🏁";
+        }
+
+        document.getElementById("next-btn").onclick = function () {
+            current++;
+            if (current < shuffled.length) {
+                render();
+            } else {
+                showResult();
+            }
+        };
+
+        function showResult() {
+            document.getElementById("quiz-main").style.display = "none";
+            document.getElementById("result-card").style.display = "block";
+
+            const total = shuffled.length;
+            const pct = Math.round((score / total) * 100);
+            const wrong = total - score;
+
+            let emoji, title, msg;
+            if (pct === 100) {
+                emoji = "🏆"; title = "Sempurna!";
+                msg = "Luar biasa! Kamu menguasai semua materi HTML, CSS, dan JavaScript dasar. Kamu siap belajar lebih lanjut!";
+            } else if (pct >= 80) {
+                emoji = "🌟"; title = "Hebat Sekali!";
+                msg = "Kamu sudah sangat paham dasar-dasar coding. Terus berlatih dan kamu akan jadi programmer hebat!";
+            } else if (pct >= 60) {
+                emoji = "👍"; title = "Bagus!";
+                msg = "Kamu sudah memahami sebagian besar materi. Pelajari lagi soal yang salah ya!";
+            } else if (pct >= 40) {
+                emoji = "💪"; title = "Terus Semangat!";
+                msg = "Ada beberapa materi yang perlu dipelajari lagi. Jangan menyerah, coba lagi!";
+            } else {
+                emoji = "📚"; title = "Ayo Belajar Lagi!";
+                msg = "Pelajari kembali materi HTML, CSS, dan JavaScript dari awal ya. Kamu pasti bisa!";
+            }
+
+            document.getElementById("result-emoji").textContent = emoji;
+            document.getElementById("result-title").textContent = title;
+            document.getElementById("result-score").textContent = score + " / " + total;
+            document.getElementById("result-max").textContent = pct + "% jawaban benar";
+            document.getElementById("stat-correct").textContent = score;
+            document.getElementById("stat-wrong").textContent = wrong;
+            document.getElementById("result-msg").textContent = msg;
+        }
+
+        function restart() {
+            document.getElementById("result-card").style.display = "none";
+            document.getElementById("start-screen").style.display = "block";
+        }
+    </script>
+
+</body>
+</html>
